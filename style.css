@@ -453,6 +453,25 @@ section {
     color: var(--color-text-muted);
 }
 
+.menu-note {
+    margin-top: 24px;
+    padding: 16px 20px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+    border-left: 2px solid var(--color-accent);
+    line-height: 1.6;
+}
+
+.menu-footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+}
+
 /* ===== GALLERY ===== */
 #gallery {
     background: var(--color-bg);
