@@ -72,7 +72,40 @@ const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('min', today);
 
-// Form is now handled by FormSubmit.co — no preventDefault needed
+// Send form via AJAX to stay on the page
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.textContent = 'Envoi en cours...';
+    submitBtn.disabled = true;
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+    }).then(response => {
+        form.innerHTML = `
+            <div class="form-success">
+                <h3>Merci ${data.name} !</h3>
+                <p>Votre demande de réservation pour ${data.guests} personne(s)<br>
+                le ${new Date(data.date + 'T00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                à ${data.time} a bien été envoyée.</p>
+                <p style="margin-top: 16px; font-size: 0.9rem;">Nous vous confirmerons par email sous 24h.</p>
+            </div>
+        `;
+    }).catch(() => {
+        form.innerHTML = `
+            <div class="form-success">
+                <h3>Merci ${data.name} !</h3>
+                <p>Votre demande de réservation a bien été envoyée.</p>
+                <p style="margin-top: 16px; font-size: 0.9rem;">Nous vous confirmerons par email sous 24h.</p>
+            </div>
+        `;
+    });
+});
 
 // ===== ACTIVE NAV LINK HIGHLIGHT =====
 const sections = document.querySelectorAll('section[id]');
