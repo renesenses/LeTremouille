@@ -385,7 +385,7 @@
             <form class="reservation-form" id="reservationForm" action="https://formsubmit.co/contact@letremouille.com" method="POST">
                 <input type="hidden" name="_subject" value="Nouvelle réservation — Le Trémouille">
                 <input type="hidden" name="_next" value="https://renesenses.github.io/LeTremouille/#reservation">
-                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_captcha" value="true">
                 <input type="hidden" name="_template" value="table">
                 <input type="text" name="_honey" style="display:none">
                 <div class="form-row">
@@ -401,7 +401,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Téléphone</label>
-                        <input type="tel" id="phone" name="phone" required placeholder="06 12 34 56 78">
+                        <input type="tel" id="phone" name="phone" required placeholder="06 12 34 56 78" pattern="^(?:(?:\+33|0033|0)\s*[1-9])(?:[\s.-]*\d{2}){4}$" title="Numéro de téléphone français valide (ex: 06 12 34 56 78)">
                     </div>
                     <div class="form-group">
                         <label for="guests">Convives</label>

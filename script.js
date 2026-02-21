@@ -72,21 +72,58 @@ const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('min', today);
 
+// Anti-spam: track submissions
+let lastSubmitTime = 0;
+const MIN_SUBMIT_INTERVAL = 30000; // 30 seconds between submissions
+const SUBMIT_KEY = 'tremouille_reservations';
+
+function getSubmitCount() {
+    const data = JSON.parse(localStorage.getItem(SUBMIT_KEY) || '{"count":0,"date":""}');
+    const today = new Date().toDateString();
+    if (data.date !== today) return 0;
+    return data.count;
+}
+
+function incrementSubmitCount() {
+    const today = new Date().toDateString();
+    const count = getSubmitCount() + 1;
+    localStorage.setItem(SUBMIT_KEY, JSON.stringify({ count, date: today }));
+}
+
 // Send form via AJAX to stay on the page
 form.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    // Anti-spam: max 3 reservations per day per browser
+    if (getSubmitCount() >= 3) {
+        alert('Vous avez atteint le nombre maximum de réservations pour aujourd\'hui. Veuillez nous appeler au 03 73 73 84 65.');
+        return;
+    }
+
+    // Anti-spam: min 30s between submissions
+    const now = Date.now();
+    if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
+        alert('Veuillez patienter avant de soumettre une nouvelle réservation.');
+        return;
+    }
+
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
+
+    // Anti-spam: reject if honeypot is filled
+    if (data._honey) return;
+
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.textContent = 'Envoi en cours...';
     submitBtn.disabled = true;
+    lastSubmitTime = now;
 
     fetch(form.action, {
         method: 'POST',
         body: formData,
         headers: { 'Accept': 'application/json' }
     }).then(response => {
+        incrementSubmitCount();
         form.innerHTML = `
             <div class="form-success">
                 <h3>Merci ${data.name} !</h3>
@@ -97,6 +134,7 @@ form.addEventListener('submit', (e) => {
             </div>
         `;
     }).catch(() => {
+        incrementSubmitCount();
         form.innerHTML = `
             <div class="form-success">
                 <h3>Merci ${data.name} !</h3>
