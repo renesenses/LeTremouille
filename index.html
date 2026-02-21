@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Trémouille — Restaurant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">Le Trémouille</a>
+            <button class="nav-toggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#about">Notre Histoire</a></li>
+                <li><a href="#menu">La Carte</a></li>
+                <li><a href="#gallery">Galerie</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#reservation" class="btn-reserve">Réserver</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <p class="hero-subtitle">Bienvenue au</p>
+            <h1 class="hero-title">Le Trémouille</h1>
+            <div class="hero-separator"></div>
+            <p class="hero-tagline">Une expérience culinaire d'exception</p>
+            <a href="#reservation" class="btn btn-primary">Réserver une table</a>
+        </div>
+        <a href="#about" class="scroll-indicator" aria-label="Défiler vers le bas">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
+        </a>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Depuis toujours</p>
+                <h2 class="section-title">Notre Histoire</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-image">
+                    <div class="placeholder-img" data-label="Photo du restaurant">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>Photo du restaurant</span>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h3>L'art de la table, revisité</h3>
+                    <p>Le Trémouille vous accueille dans un cadre chaleureux et raffiné. Notre chef met un point d'honneur à sélectionner les meilleurs produits de saison pour composer des plats qui allient tradition et modernité.</p>
+                    <p>Chaque assiette est une invitation au voyage gustatif, chaque service une parenthèse d'exception dans votre quotidien.</p>
+                    <div class="about-features">
+                        <div class="feature">
+                            <span class="feature-number">100%</span>
+                            <span class="feature-label">Produits frais</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-number">Fait</span>
+                            <span class="feature-label">Maison</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-number">Local</span>
+                            <span class="feature-label">& de saison</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu -->
+    <section id="menu">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Savourez</p>
+                <h2 class="section-title">La Carte</h2>
+            </div>
+
+            <div class="menu-tabs">
+                <button class="menu-tab active" data-tab="entrees">Entrées</button>
+                <button class="menu-tab" data-tab="plats">Plats</button>
+                <button class="menu-tab" data-tab="desserts">Desserts</button>
+                <button class="menu-tab" data-tab="vins">Vins</button>
+            </div>
+
+            <div class="menu-content">
+                <div class="menu-panel active" id="entrees">
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Velouté de butternut</h4>
+                            <span class="menu-price">12€</span>
+                        </div>
+                        <p>Crème de butternut, éclats de noisettes torréfiées, huile de truffe</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Tartare de saumon</h4>
+                            <span class="menu-price">16€</span>
+                        </div>
+                        <p>Saumon frais Label Rouge, avocat, agrumes, sésame</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Burrata crémeuse</h4>
+                            <span class="menu-price">14€</span>
+                        </div>
+                        <p>Burrata des Pouilles, tomates anciennes, pesto basilic, roquette</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Foie gras mi-cuit</h4>
+                            <span class="menu-price">19€</span>
+                        </div>
+                        <p>Foie gras maison, chutney de figues, brioche toastée</p>
+                    </div>
+                </div>
+
+                <div class="menu-panel" id="plats">
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Filet de boeuf</h4>
+                            <span class="menu-price">32€</span>
+                        </div>
+                        <p>Race Angus, jus corsé, gratin dauphinois, légumes de saison</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Dos de cabillaud</h4>
+                            <span class="menu-price">26€</span>
+                        </div>
+                        <p>Cabillaud rôti, risotto crémeux aux asperges, beurre blanc citronné</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Magret de canard</h4>
+                            <span class="menu-price">28€</span>
+                        </div>
+                        <p>Magret rosé, sauce aux cerises, purée de patate douce</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Risotto aux cèpes</h4>
+                            <span class="menu-price">22€</span>
+                        </div>
+                        <p>Riz carnaroli, cèpes frais, parmesan 24 mois, truffe noire</p>
+                    </div>
+                </div>
+
+                <div class="menu-panel" id="desserts">
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Moelleux au chocolat</h4>
+                            <span class="menu-price">11€</span>
+                        </div>
+                        <p>Chocolat Valrhona 70%, coeur coulant, glace vanille de Madagascar</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Tarte tatin</h4>
+                            <span class="menu-price">10€</span>
+                        </div>
+                        <p>Pommes caramélisées, pâte feuilletée, crème fraîche d'Isigny</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Crème brûlée</h4>
+                            <span class="menu-price">9€</span>
+                        </div>
+                        <p>Vanille Bourbon, caramel craquant</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Assiette de fromages</h4>
+                            <span class="menu-price">13€</span>
+                        </div>
+                        <p>Sélection affinée, confiture de cerises noires, noix</p>
+                    </div>
+                </div>
+
+                <div class="menu-panel" id="vins">
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Sancerre blanc</h4>
+                            <span class="menu-price">8€ / 38€</span>
+                        </div>
+                        <p>Domaine Vacheron, Loire — Frais, minéral, notes d'agrumes</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Saint-Émilion Grand Cru</h4>
+                            <span class="menu-price">12€ / 55€</span>
+                        </div>
+                        <p>Château Canon, Bordeaux — Élégant, fruits noirs, tanins soyeux</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Côtes du Rhône rosé</h4>
+                            <span class="menu-price">6€ / 28€</span>
+                        </div>
+                        <p>Domaine de la Janasse — Fruité, léger, notes de pêche</p>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <h4>Champagne</h4>
+                            <span class="menu-price">14€ / 65€</span>
+                        </div>
+                        <p>Maison Ruinart, Brut — Bulles fines, brioche, élégance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="gallery">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Ambiance</p>
+                <h2 class="section-title">Galerie</h2>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item gallery-item--wide">
+                    <div class="placeholder-img" data-label="Salle du restaurant">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>Salle du restaurant</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-img" data-label="Plat signature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>Plat signature</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-img" data-label="Détail déco">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>Détail déco</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-img" data-label="Dessert">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>Dessert</span>
+                    </div>
+                </div>
+                <div class="gallery-item gallery-item--wide">
+                    <div class="placeholder-img" data-label="Terrasse">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>Terrasse</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="placeholder-img" data-label="En cuisine">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                        <span>En cuisine</span>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-cta">
+                <a href="https://www.instagram.com/letremouille/" target="_blank" rel="noopener" class="btn btn-outline">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Suivez-nous sur Instagram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservation -->
+    <section id="reservation">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Votre table vous attend</p>
+                <h2 class="section-title">Réservation</h2>
+            </div>
+            <form class="reservation-form" id="reservationForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Nom</label>
+                        <input type="text" id="name" name="name" required placeholder="Votre nom">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="06 12 34 56 78">
+                    </div>
+                    <div class="form-group">
+                        <label for="guests">Convives</label>
+                        <select id="guests" name="guests" required>
+                            <option value="">Nombre de personnes</option>
+                            <option value="1">1 personne</option>
+                            <option value="2">2 personnes</option>
+                            <option value="3">3 personnes</option>
+                            <option value="4">4 personnes</option>
+                            <option value="5">5 personnes</option>
+                            <option value="6">6 personnes</option>
+                            <option value="7+">7+ personnes</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time">Heure</label>
+                        <select id="time" name="time" required>
+                            <option value="">Choisir un créneau</option>
+                            <option value="12:00">12h00</option>
+                            <option value="12:30">12h30</option>
+                            <option value="13:00">13h00</option>
+                            <option value="13:30">13h30</option>
+                            <option value="19:00">19h00</option>
+                            <option value="19:30">19h30</option>
+                            <option value="20:00">20h00</option>
+                            <option value="20:30">20h30</option>
+                            <option value="21:00">21h00</option>
+                            <option value="21:30">21h30</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="message">Message (optionnel)</label>
+                    <textarea id="message" name="message" rows="3" placeholder="Allergies, occasion spéciale, demandes..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Confirmer la réservation</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="section-header section-header--left">
+                        <p class="section-subtitle">Rendez-nous visite</p>
+                        <h2 class="section-title">Contact</h2>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <div>
+                                <strong>Adresse</strong>
+                                <p>Votre adresse ici<br>Paris, France</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                            <div>
+                                <strong>Téléphone</strong>
+                                <p>01 23 45 67 89</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            <div>
+                                <strong>Horaires</strong>
+                                <p>Mar - Sam : 12h–14h / 19h–22h30<br>Dim : 12h–15h<br>Lun : Fermé</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            <div>
+                                <strong>Instagram</strong>
+                                <p><a href="https://www.instagram.com/letremouille/" target="_blank" rel="noopener">@letremouille</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-map">
+                    <div class="placeholder-img placeholder-map" data-label="Carte Google Maps">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>Intégrer Google Maps ici</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Le Trémouille</h3>
+                    <p>Une expérience culinaire d'exception</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#about">Notre Histoire</a>
+                    <a href="#menu">La Carte</a>
+                    <a href="#gallery">Galerie</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/letremouille/" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Le Trémouille. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
