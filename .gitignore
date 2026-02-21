@@ -1,0 +1,6 @@
+videos/
+images_unique/
+images/insta-*
+images/download-*
+*.py
+.DS_Store
