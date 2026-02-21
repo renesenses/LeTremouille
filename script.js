@@ -72,23 +72,7 @@ const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('min', today);
 
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData);
-
-    // Replace form with success message
-    form.innerHTML = `
-        <div class="form-success">
-            <h3>Merci ${data.name} !</h3>
-            <p>Votre demande de réservation pour ${data.guests} personne(s)<br>
-            le ${new Date(data.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-            à ${data.time} a bien été envoyée.</p>
-            <p style="margin-top: 16px; font-size: 0.9rem;">Nous vous confirmerons par email sous 24h.</p>
-        </div>
-    `;
-});
+// Form is now handled by FormSubmit.co — no preventDefault needed
 
 // ===== ACTIVE NAV LINK HIGHLIGHT =====
 const sections = document.querySelectorAll('section[id]');

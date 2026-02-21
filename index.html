@@ -267,7 +267,12 @@
                 <p class="section-subtitle">Votre table vous attend</p>
                 <h2 class="section-title">Réservation</h2>
             </div>
-            <form class="reservation-form" id="reservationForm">
+            <form class="reservation-form" id="reservationForm" action="https://formsubmit.co/contact@letremouille.com" method="POST">
+                <input type="hidden" name="_subject" value="Nouvelle réservation — Le Trémouille">
+                <input type="hidden" name="_next" value="https://renesenses.github.io/LeTremouille/#reservation">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="text" name="_honey" style="display:none">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">Nom</label>
@@ -357,6 +362,13 @@
                             <div>
                                 <strong>Horaires</strong>
                                 <p>Mar - Sam : 12h–14h / 19h–22h30<br>Dim : 12h–15h<br>Lun : Fermé</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+                            <div>
+                                <strong>Email</strong>
+                                <p><a href="mailto:contact@letremouille.com">contact@letremouille.com</a></p>
                             </div>
                         </div>
                         <div class="contact-item">
