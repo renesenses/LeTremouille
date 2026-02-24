@@ -72,6 +72,33 @@ const dateInput = document.getElementById('date');
 const today = new Date().toISOString().split('T')[0];
 dateInput.setAttribute('min', today);
 
+// ===== TIME SLOTS BASED ON DAY =====
+const timeSelect = document.getElementById('time');
+const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
+
+dateInput.addEventListener('change', () => {
+    const selected = new Date(dateInput.value + 'T00:00');
+    const day = selected.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+
+    // Sunday (0): closed — block the date
+    if (day === 0) {
+        alert('Le restaurant est fermé le dimanche. Veuillez choisir un autre jour.');
+        dateInput.value = '';
+        timeSelect.innerHTML = '';
+        allTimeOptions.forEach(opt => timeSelect.appendChild(opt.cloneNode(true)));
+        return;
+    }
+
+    // Tuesday (2) / Wednesday (3): lunch only — remove evening slots
+    const lunchOnly = (day === 2 || day === 3);
+
+    timeSelect.innerHTML = '';
+    allTimeOptions.forEach(opt => {
+        if (lunchOnly && opt.value && opt.value >= '19:00') return;
+        timeSelect.appendChild(opt.cloneNode(true));
+    });
+});
+
 // Anti-spam: track submissions
 let lastSubmitTime = 0;
 const MIN_SUBMIT_INTERVAL = 30000; // 30 seconds between submissions
