@@ -614,6 +614,21 @@ section {
     color: var(--color-text);
 }
 
+.form-date-info {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
+.form-date-info.info-closed {
+    color: #c0392b;
+}
+
+.form-date-info.info-lunch {
+    color: var(--color-accent, #c8a97e);
+}
+
 .form-group textarea {
     resize: vertical;
 }

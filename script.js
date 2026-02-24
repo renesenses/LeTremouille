@@ -74,23 +74,34 @@ dateInput.setAttribute('min', today);
 
 // ===== TIME SLOTS BASED ON DAY =====
 const timeSelect = document.getElementById('time');
+const dateInfo = document.getElementById('dateInfo');
 const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
 
 dateInput.addEventListener('change', () => {
     const selected = new Date(dateInput.value + 'T00:00');
     const day = selected.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
 
-    // Sunday (0): closed — block the date
+    // Reset info
+    dateInfo.textContent = '';
+    dateInfo.className = 'form-date-info';
+
+    // Sunday (0): closed
     if (day === 0) {
-        alert('Le restaurant est fermé le dimanche. Veuillez choisir un autre jour.');
+        dateInfo.textContent = 'Fermé le dimanche — veuillez choisir un autre jour.';
+        dateInfo.classList.add('info-closed');
         dateInput.value = '';
         timeSelect.innerHTML = '';
         allTimeOptions.forEach(opt => timeSelect.appendChild(opt.cloneNode(true)));
         return;
     }
 
-    // Tuesday (2) / Wednesday (3): lunch only — remove evening slots
+    // Tuesday (2) / Wednesday (3): lunch only
     const lunchOnly = (day === 2 || day === 3);
+
+    if (lunchOnly) {
+        dateInfo.textContent = 'Service midi uniquement le mardi et mercredi (12h–14h).';
+        dateInfo.classList.add('info-lunch');
+    }
 
     timeSelect.innerHTML = '';
     allTimeOptions.forEach(opt => {
