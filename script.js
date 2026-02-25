@@ -128,9 +128,17 @@ function incrementSubmitCount() {
     localStorage.setItem(SUBMIT_KEY, JSON.stringify({ count, date: today }));
 }
 
+// Sync _replyto with client email
+const emailInput = document.getElementById('email');
+const replyToInput = document.getElementById('replyto');
+emailInput.addEventListener('input', () => {
+    replyToInput.value = emailInput.value;
+});
+
 // Send form via AJAX to stay on the page
 form.addEventListener('submit', (e) => {
     e.preventDefault();
+    replyToInput.value = emailInput.value;
 
     // Anti-spam: max 3 reservations per day per browser
     if (getSubmitCount() >= 3) {
@@ -168,7 +176,7 @@ form.addEventListener('submit', (e) => {
                 <p>Votre demande de réservation pour ${data.guests} personne(s)<br>
                 le ${new Date(data.date + 'T00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                 à ${data.time} a bien été envoyée.</p>
-                <p style="margin-top: 16px; font-size: 0.9rem;">Nous vous confirmerons par email sous 24h.</p>
+                <p style="margin-top: 16px; font-size: 0.9rem;">Sans nouvelle de notre part sous 2h, votre réservation est confirmée.</p>
             </div>
         `;
     }).catch(() => {
@@ -177,7 +185,7 @@ form.addEventListener('submit', (e) => {
             <div class="form-success">
                 <h3>Merci ${data.name} !</h3>
                 <p>Votre demande de réservation a bien été envoyée.</p>
-                <p style="margin-top: 16px; font-size: 0.9rem;">Nous vous confirmerons par email sous 24h.</p>
+                <p style="margin-top: 16px; font-size: 0.9rem;">Sans nouvelle de notre part sous 2h, votre réservation est confirmée.</p>
             </div>
         `;
     });
