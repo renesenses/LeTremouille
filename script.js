@@ -149,6 +149,12 @@ form.addEventListener('submit', (e) => {
     e.preventDefault();
     replyToInput.value = emailInput.value;
 
+    // Bloquer soirées complètes à la soumission
+    if (soireesCompletes.includes(dateInput.value) && timeSelect.value >= '19:00') {
+        alert('Désolé, le service du soir est complet pour cette date. Il reste des places le midi !');
+        return;
+    }
+
     // Anti-spam: max 3 reservations per day per browser
     if (getSubmitCount() >= 3) {
         alert('Vous avez atteint le nombre maximum de réservations pour aujourd\'hui. Veuillez nous appeler au 03 73 73 84 65.');
