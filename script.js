@@ -77,6 +77,9 @@ const timeSelect = document.getElementById('time');
 const dateInfo = document.getElementById('dateInfo');
 const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
 
+// Soirées complètes (format YYYY-MM-DD)
+const soireesCompletes = ['2026-03-12', '2026-03-27'];
+
 dateInput.addEventListener('change', () => {
     const selected = new Date(dateInput.value + 'T00:00');
     const day = selected.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
@@ -98,14 +101,20 @@ dateInput.addEventListener('change', () => {
     // Tuesday (2) / Wednesday (3): lunch only
     const lunchOnly = (day === 2 || day === 3);
 
+    // Evening fully booked on specific dates
+    const eveningFull = soireesCompletes.includes(dateInput.value);
+
     if (lunchOnly) {
         dateInfo.textContent = 'Service midi uniquement le mardi et mercredi (12h–14h).';
+        dateInfo.classList.add('info-lunch');
+    } else if (eveningFull) {
+        dateInfo.textContent = 'Complet en soirée — il reste des places le midi.';
         dateInfo.classList.add('info-lunch');
     }
 
     timeSelect.innerHTML = '';
     allTimeOptions.forEach(opt => {
-        if (lunchOnly && opt.value && opt.value >= '19:00') return;
+        if ((lunchOnly || eveningFull) && opt.value && opt.value >= '19:00') return;
         timeSelect.appendChild(opt.cloneNode(true));
     });
 });
