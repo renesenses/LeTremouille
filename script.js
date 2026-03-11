@@ -78,7 +78,7 @@ const dateInfo = document.getElementById('dateInfo');
 const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
 
 // Soirées complètes (format YYYY-MM-DD)
-const soireesCompletes = ['2026-03-12', '2026-03-27'];
+const soireesCompletes = ['2026-03-27'];
 
 dateInput.addEventListener('change', () => {
     const selected = new Date(dateInput.value + 'T00:00');
