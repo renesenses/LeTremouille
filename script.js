@@ -80,6 +80,9 @@ const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
 // Soirées complètes (format YYYY-MM-DD)
 const soireesCompletes = ['2026-03-27'];
 
+// Ouvertures exceptionnelles en soirée (mar/mer normalement fermés le soir)
+const soireesExceptionnelles = ['2026-03-25'];
+
 dateInput.addEventListener('change', () => {
     const selected = new Date(dateInput.value + 'T00:00');
     const day = selected.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
@@ -98,8 +101,8 @@ dateInput.addEventListener('change', () => {
         return;
     }
 
-    // Tuesday (2) / Wednesday (3): lunch only
-    const lunchOnly = (day === 2 || day === 3);
+    // Tuesday (2) / Wednesday (3): lunch only, sauf ouvertures exceptionnelles
+    const lunchOnly = (day === 2 || day === 3) && !soireesExceptionnelles.includes(dateInput.value);
 
     // Evening fully booked on specific dates
     const eveningFull = soireesCompletes.includes(dateInput.value);
