@@ -3,6 +3,6 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3100:8080"
+      - "3100:8080"
     env_file:
       - .env
