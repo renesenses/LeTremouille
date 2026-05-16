@@ -769,6 +769,24 @@ section {
     animation: fadeIn 0.5s ease;
 }
 
+.form-error {
+    background: rgba(192, 57, 43, 0.1);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #e74c3c;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+}
+
+.form-error a {
+    color: #e74c3c;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
 .form-success h3 {
     font-family: var(--font-display);
     font-size: 1.6rem;

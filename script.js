@@ -66,6 +66,7 @@ revealElements.forEach(el => observer.observe(el));
 
 // ===== RESERVATION FORM =====
 const form = document.getElementById('reservationForm');
+const API_URL = 'https://api.letremouille.fr/reservation';
 
 // Set minimum date to today
 const dateInput = document.getElementById('date');
@@ -140,17 +141,10 @@ function incrementSubmitCount() {
     localStorage.setItem(SUBMIT_KEY, JSON.stringify({ count, date: today }));
 }
 
-// Sync _replyto with client email
-const emailInput = document.getElementById('email');
-const replyToInput = document.getElementById('replyto');
-emailInput.addEventListener('input', () => {
-    replyToInput.value = emailInput.value;
-});
 
 // Send form via AJAX to stay on the page
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    replyToInput.value = emailInput.value;
 
     // Bloquer soirées complètes à la soumission
     if (soireesCompletes.includes(dateInput.value) && timeSelect.value >= '19:00') {
@@ -178,15 +172,20 @@ form.addEventListener('submit', (e) => {
     if (data._honey) return;
 
     const submitBtn = form.querySelector('button[type="submit"]');
+    const existingError = form.querySelector('.form-error');
+    if (existingError) existingError.remove();
+
     submitBtn.textContent = 'Envoi en cours...';
     submitBtn.disabled = true;
     lastSubmitTime = now;
 
-    fetch(form.action, {
+    fetch(API_URL, {
         method: 'POST',
         body: formData,
-        headers: { 'Accept': 'application/json' }
     }).then(response => {
+        if (!response.ok) throw new Error(response.status);
+        return response.json();
+    }).then(() => {
         incrementSubmitCount();
         form.innerHTML = `
             <div class="form-success">
@@ -198,14 +197,12 @@ form.addEventListener('submit', (e) => {
             </div>
         `;
     }).catch(() => {
-        incrementSubmitCount();
-        form.innerHTML = `
-            <div class="form-success">
-                <h3>Merci ${data.name} !</h3>
-                <p>Votre demande de réservation a bien été envoyée.</p>
-                <p style="margin-top: 16px; font-size: 0.9rem;">Sans nouvelle de notre part sous 2h, votre réservation est confirmée.</p>
-            </div>
-        `;
+        submitBtn.textContent = 'Confirmer la réservation';
+        submitBtn.disabled = false;
+        const err = document.createElement('div');
+        err.className = 'form-error';
+        err.innerHTML = 'Une erreur est survenue. Veuillez réessayer ou nous appeler au <a href="tel:+33373738465">03 73 73 84 65</a>.';
+        form.insertBefore(err, submitBtn);
     });
 });
 

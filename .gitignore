@@ -4,3 +4,4 @@ images/insta-*
 images/download-*
 *.py
 .DS_Store
+api/.env
