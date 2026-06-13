@@ -79,7 +79,7 @@ const dateInfo = document.getElementById('dateInfo');
 const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
 
 // Soirées complètes (format YYYY-MM-DD)
-const soireesCompletes = ['2026-03-27'];
+const soireesCompletes = ['2026-03-27', '2026-07-10'];
 
 // Ouvertures exceptionnelles en soirée (mar/mer normalement fermés le soir)
 const soireesExceptionnelles = ['2026-03-25'];
