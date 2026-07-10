@@ -84,6 +84,15 @@ const soireesCompletes = ['2026-03-27', '2026-07-10'];
 // Ouvertures exceptionnelles en soirée (mar/mer normalement fermés le soir)
 const soireesExceptionnelles = ['2026-03-25'];
 
+// Fermetures complètes (congés) : plages de dates [debut, fin] incluses, midi et soir
+const fermetures = [
+    { debut: '2026-08-10', fin: '2026-08-23' }, // Congés d'été
+];
+
+function estFerme(dateStr) {
+    return fermetures.some(f => dateStr >= f.debut && dateStr <= f.fin);
+}
+
 dateInput.addEventListener('change', () => {
     const selected = new Date(dateInput.value + 'T00:00');
     const day = selected.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
@@ -91,6 +100,16 @@ dateInput.addEventListener('change', () => {
     // Reset info
     dateInfo.textContent = '';
     dateInfo.className = 'form-date-info';
+
+    // Fermeture complète (congés) : midi et soir
+    if (estFerme(dateInput.value)) {
+        dateInfo.textContent = 'Fermé pour congés à cette date — veuillez choisir un autre jour.';
+        dateInfo.classList.add('info-closed');
+        dateInput.value = '';
+        timeSelect.innerHTML = '';
+        allTimeOptions.forEach(opt => timeSelect.appendChild(opt.cloneNode(true)));
+        return;
+    }
 
     // Sunday (0): closed
     if (day === 0) {
@@ -145,6 +164,12 @@ function incrementSubmitCount() {
 // Send form via AJAX to stay on the page
 form.addEventListener('submit', (e) => {
     e.preventDefault();
+
+    // Bloquer les dates fermées (congés) à la soumission
+    if (estFerme(dateInput.value)) {
+        alert('Désolé, nous sommes fermés à cette date. Veuillez choisir un autre jour.');
+        return;
+    }
 
     // Bloquer soirées complètes à la soumission
     if (soireesCompletes.includes(dateInput.value) && timeSelect.value >= '19:00') {
