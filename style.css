@@ -472,6 +472,66 @@ section {
     color: var(--color-text-muted);
 }
 
+/* ===== TRAITEUR / SUR MESURE ===== */
+#traiteur {
+    background: var(--color-bg);
+    background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(200, 169, 110, 0.06) 0%, transparent 55%);
+}
+
+.traiteur-intro {
+    max-width: 720px;
+    margin: -32px auto 56px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.traiteur-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.traiteur-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 40px 28px;
+    text-align: center;
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.traiteur-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
+}
+
+.traiteur-card svg {
+    color: var(--color-accent);
+    margin-bottom: 20px;
+}
+
+.traiteur-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--color-text);
+    margin-bottom: 12px;
+}
+
+.traiteur-card p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.traiteur-cta {
+    text-align: center;
+    margin-top: 48px;
+}
+
 /* ===== GALLERY ===== */
 #gallery {
     background: var(--color-bg);
@@ -838,6 +898,11 @@ section {
 
     .gallery-item--wide {
         grid-column: span 2;
+    }
+
+    .traiteur-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .form-row {

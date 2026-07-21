@@ -49,7 +49,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ===== SCROLL REVEAL =====
 const revealElements = document.querySelectorAll(
-    '.about-grid, .menu-tabs, .menu-content, .gallery-grid, .reservation-form, .contact-grid, .section-header'
+    '.about-grid, .menu-tabs, .menu-content, .traiteur-intro, .traiteur-grid, .gallery-grid, .reservation-form, .contact-grid, .section-header'
 );
 
 revealElements.forEach(el => el.classList.add('reveal'));
