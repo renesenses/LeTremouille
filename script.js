@@ -86,7 +86,7 @@ const soireesExceptionnelles = ['2026-03-25'];
 
 // Fermetures complètes (congés) : plages de dates [debut, fin] incluses, midi et soir
 const fermetures = [
-    { debut: '2026-08-10', fin: '2026-08-23' }, // Congés d'été
+    { debut: '2026-08-09', fin: '2026-08-23' }, // Congés d'été
 ];
 
 function estFerme(dateStr) {
