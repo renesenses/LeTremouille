@@ -49,7 +49,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ===== SCROLL REVEAL =====
 const revealElements = document.querySelectorAll(
-    '.about-grid, .menu-tabs, .menu-content, .traiteur-intro, .traiteur-grid, .gallery-grid, .reservation-form, .contact-grid, .section-header'
+    '.about-grid, .menu-tabs, .menu-content, .traiteur-intro, .traiteur-grid, .devis-wrapper, .gallery-grid, .reservation-form, .contact-grid, .section-header'
 );
 
 revealElements.forEach(el => el.classList.add('reveal'));
@@ -226,6 +226,68 @@ form.addEventListener('submit', (e) => {
         err.className = 'form-error';
         err.innerHTML = 'Une erreur est survenue. Veuillez réessayer ou nous appeler au <a href="tel:+33373738465">03 73 73 84 65</a>.';
         form.insertBefore(err, submitBtn);
+    });
+});
+
+// ===== TRAITEUR / PRIVATISATION : DEMANDE DE DEVIS =====
+const devisForm = document.getElementById('devisForm');
+const devisPrestation = document.getElementById('devis-prestation');
+const devisDate = document.getElementById('devis-date');
+const CONTACT_URL = 'https://api.letremouille.fr/contact';
+
+devisDate.setAttribute('min', today);
+
+// Clic sur un encart : pré-sélectionner la prestation (le défilement vers #devis est géré plus haut)
+document.querySelectorAll('.traiteur-card[data-prestation]').forEach(card => {
+    card.addEventListener('click', () => {
+        devisPrestation.value = card.dataset.prestation;
+    });
+});
+
+let lastDevisTime = 0;
+
+devisForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const now = Date.now();
+    if (now - lastDevisTime < MIN_SUBMIT_INTERVAL) {
+        alert('Veuillez patienter avant d\'envoyer une nouvelle demande.');
+        return;
+    }
+
+    const formData = new FormData(devisForm);
+    const data = Object.fromEntries(formData);
+    if (data._honey) return;
+
+    const submitBtn = devisForm.querySelector('button[type="submit"]');
+    const existingError = devisForm.querySelector('.form-error');
+    if (existingError) existingError.remove();
+
+    submitBtn.textContent = 'Envoi en cours...';
+    submitBtn.disabled = true;
+    lastDevisTime = now;
+
+    fetch(CONTACT_URL, {
+        method: 'POST',
+        body: formData,
+    }).then(response => {
+        if (!response.ok) throw new Error(response.status);
+        return response.json();
+    }).then(() => {
+        devisForm.innerHTML = `
+            <div class="form-success">
+                <h3>Merci ${data.name} !</h3>
+                <p>Votre demande « ${data.prestation} » a bien été envoyée.<br>
+                Nous revenons vers vous très rapidement.</p>
+            </div>
+        `;
+    }).catch(() => {
+        submitBtn.textContent = 'Envoyer ma demande';
+        submitBtn.disabled = false;
+        const err = document.createElement('div');
+        err.className = 'form-error';
+        err.innerHTML = 'Une erreur est survenue. Veuillez réessayer ou nous écrire à <a href="mailto:contact@letremouille.com">contact@letremouille.com</a>.';
+        devisForm.insertBefore(err, submitBtn);
     });
 });
 

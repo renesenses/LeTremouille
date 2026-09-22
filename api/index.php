@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-if ($uri !== '/reservation') {
+if (!in_array($uri, ['/reservation', '/contact'], true)) {
     http_response_code(404);
     exit(json_encode(['error' => 'Not found']));
 }
@@ -35,6 +35,73 @@ $input = str_contains($ct, 'application/json')
 if (!empty($input['_honey'])) {
     exit(json_encode(['success' => true]));
 }
+
+// --- Config ---
+$resendKey = getenv('RESEND_API_KEY');
+$toEmail   = getenv('TREMOUILLE_TO_EMAIL') ?: 'contact@letremouille.com';
+$fromEmail = getenv('TREMOUILLE_FROM_EMAIL') ?: 'noreply@mozaiklabs.fr';
+$fromName  = 'Le Trémouille';
+
+if (!$resendKey) {
+    error_log('RESEND_API_KEY not configured');
+    http_response_code(500);
+    exit(json_encode(['error' => 'Configuration serveur manquante']));
+}
+
+// --- Escape for HTML emails ---
+$h = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+// =============================================================
+// /contact — demande traiteur / événement / privatisation
+// =============================================================
+if ($uri === '/contact') {
+    $name       = trim($input['name'] ?? '');
+    $email      = trim($input['email'] ?? '');
+    $phone      = trim($input['phone'] ?? '');
+    $prestation = trim($input['prestation'] ?? '');
+    $date       = trim($input['date'] ?? '');
+    $guests     = trim($input['guests'] ?? '');
+    $message    = trim($input['message'] ?? '');
+
+    $errors = [];
+    if ($name === '')  $errors[] = 'name';
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
+    if ($phone === '') $errors[] = 'phone';
+    if ($prestation === '' || mb_strlen($prestation) > 60) $errors[] = 'prestation';
+    if ($date !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $errors[] = 'date';
+    if ($guests !== '' && !preg_match('/^\d{1,3}$/', $guests)) $errors[] = 'guests';
+    if ($message === '' || mb_strlen($message) > 5000) $errors[] = 'message';
+
+    if ($errors) {
+        http_response_code(422);
+        exit(json_encode(['error' => 'Champs invalides', 'fields' => $errors]));
+    }
+
+    $dateFormatted = $date !== '' ? formatDateFr($date) : '';
+
+    $ok1 = sendEmail($resendKey, $fromEmail, $fromName, $toEmail,
+        "Demande {$prestation} — {$name}",
+        buildContactNotificationHtml($h, $name, $email, $phone, $prestation, $dateFormatted, $guests, $message),
+        $email
+    );
+
+    $ok2 = sendEmail($resendKey, $fromEmail, $fromName, $email,
+        'Votre demande au Trémouille',
+        buildContactConfirmationHtml($h, $name, $prestation),
+        $toEmail
+    );
+
+    if ($ok1 && $ok2) {
+        exit(json_encode(['success' => true]));
+    }
+
+    http_response_code(500);
+    exit(json_encode(['error' => "Erreur d'envoi"]));
+}
+
+// =============================================================
+// /reservation
+// =============================================================
 
 // --- Validate ---
 $name    = trim($input['name'] ?? '');
@@ -60,21 +127,6 @@ if ($errors) {
 
 // --- Format date in French ---
 $dateFormatted = formatDateFr($date);
-
-// --- Config ---
-$resendKey = getenv('RESEND_API_KEY');
-$toEmail   = getenv('TREMOUILLE_TO_EMAIL') ?: 'contact@letremouille.com';
-$fromEmail = getenv('TREMOUILLE_FROM_EMAIL') ?: 'noreply@mozaiklabs.fr';
-$fromName  = 'Le Trémouille';
-
-if (!$resendKey) {
-    error_log('RESEND_API_KEY not configured');
-    http_response_code(500);
-    exit(json_encode(['error' => 'Configuration serveur manquante']));
-}
-
-// --- Escape for HTML emails ---
-$h = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
 // --- Send notification to restaurateur ---
 $ok1 = sendEmail($resendKey, $fromEmail, $fromName, $toEmail,
@@ -193,6 +245,80 @@ function buildConfirmationHtml(Closure $h, string $name, string $guests, string 
                     {$h($date)} à <strong>{$h($time)}</strong>
                 </div>
                 <p style="margin:0 0 24px;">Sans nouvelle de notre part dans les 2 heures, votre réservation est confirmée.</p>
+                <p style="margin:0;font-size:14px;color:#666;line-height:1.6;">
+                    À très bientôt !<br>
+                    <strong>L'équipe du Trémouille</strong><br>
+                    7 Boulevard de la Trémouille, 21000 Dijon<br>
+                    03 73 73 84 65
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    HTML;
+}
+
+function buildContactNotificationHtml(Closure $h, string $name, string $email, string $phone, string $prestation, string $date, string $guests, string $message): string
+{
+    $rows = <<<HTML
+    <tr><td style="padding:8px 12px;color:#888;">Nom</td><td style="padding:8px 12px;font-weight:600;">{$h($name)}</td></tr>
+    <tr><td style="padding:8px 12px;color:#888;">Email</td><td style="padding:8px 12px;"><a href="mailto:{$h($email)}" style="color:#c8a96e;">{$h($email)}</a></td></tr>
+    <tr><td style="padding:8px 12px;color:#888;">Téléphone</td><td style="padding:8px 12px;"><a href="tel:{$h($phone)}" style="color:#c8a96e;">{$h($phone)}</a></td></tr>
+    <tr><td style="padding:8px 12px;color:#888;">Prestation</td><td style="padding:8px 12px;font-weight:600;">{$h($prestation)}</td></tr>
+    HTML;
+
+    if ($date !== '') {
+        $rows .= <<<HTML
+        <tr><td style="padding:8px 12px;color:#888;">Date souhaitée</td><td style="padding:8px 12px;">{$h($date)}</td></tr>
+        HTML;
+    }
+
+    if ($guests !== '') {
+        $rows .= <<<HTML
+        <tr><td style="padding:8px 12px;color:#888;">Convives</td><td style="padding:8px 12px;">{$h($guests)}</td></tr>
+        HTML;
+    }
+
+    $rows .= <<<HTML
+    <tr><td style="padding:8px 12px;color:#888;vertical-align:top;">Projet</td><td style="padding:8px 12px;white-space:pre-line;">{$h($message)}</td></tr>
+    HTML;
+
+    return <<<HTML
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head><meta charset="UTF-8"></head>
+    <body style="margin:0;padding:40px 16px;font-family:-apple-system,sans-serif;background:#f5f0eb;color:#1a1a1a;">
+        <div style="max-width:500px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
+            <div style="background:#1a1a1a;padding:24px 32px;">
+                <h1 style="margin:0;font-size:18px;color:#c8a96e;font-weight:600;">Nouvelle demande — {$h($prestation)}</h1>
+            </div>
+            <div style="padding:24px 32px;">
+                <table style="width:100%;border-collapse:collapse;">{$rows}</table>
+            </div>
+        </div>
+    </body>
+    </html>
+    HTML;
+}
+
+function buildContactConfirmationHtml(Closure $h, string $name, string $prestation): string
+{
+    return <<<HTML
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head><meta charset="UTF-8"></head>
+    <body style="margin:0;padding:40px 16px;font-family:-apple-system,sans-serif;background:#f5f0eb;color:#1a1a1a;">
+        <div style="max-width:500px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
+            <div style="background:#1a1a1a;padding:24px 32px;">
+                <h1 style="margin:0;font-size:18px;color:#c8a96e;font-weight:600;">Le Trémouille</h1>
+            </div>
+            <div style="padding:32px;">
+                <p style="font-size:16px;margin:0 0 16px;">Bonjour {$h($name)},</p>
+                <p style="margin:0 0 16px;">Nous avons bien reçu votre demande concernant :</p>
+                <div style="background:#f5f0eb;padding:16px 20px;border-radius:6px;margin:0 0 20px;">
+                    <strong>{$h($prestation)}</strong>
+                </div>
+                <p style="margin:0 0 24px;">Nous l'étudions et revenons vers vous très rapidement avec une proposition sur mesure.</p>
                 <p style="margin:0;font-size:14px;color:#666;line-height:1.6;">
                     À très bientôt !<br>
                     <strong>L'équipe du Trémouille</strong><br>

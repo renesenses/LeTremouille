@@ -369,24 +369,79 @@
             </div>
             <p class="traiteur-intro">Menus, apéritifs dînatoires, plateaux repas… Nous composons chaque prestation entièrement sur mesure, selon vos envies, votre budget et le nombre de convives. Réunions professionnelles, réceptions, événements familiaux : parlons de votre projet.</p>
             <div class="traiteur-grid">
-                <div class="traiteur-card">
+                <a href="#devis" class="traiteur-card" data-prestation="Menus sur mesure">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2v7c0 1.1.9 2 2 2h0c1.1 0 2-.9 2-2V2M5 2v20M12 2v20c-3 0-5-2-5-5 0-4 2-7 5-7"/><path d="M17 2c-1.5 0-3 1.5-3 5s1.5 5 3 5v10"/></svg>
                     <h3>Menus sur mesure</h3>
                     <p>Des menus composés avec vous, à partir de produits frais et de saison, pour tous vos repas et réceptions.</p>
-                </div>
-                <div class="traiteur-card">
+                    <span class="traiteur-card-link">Demander un devis</span>
+                </a>
+                <a href="#devis" class="traiteur-card" data-prestation="Apéritif dînatoire">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h14l-6 8v7M13 18h-2M9 21h6M5 3l7 8"/></svg>
                     <h3>Apéritifs dînatoires</h3>
                     <p>Pièces cocktail salées et sucrées, planches généreuses et bouchées gourmandes pour vos moments conviviaux.</p>
-                </div>
-                <div class="traiteur-card">
+                    <span class="traiteur-card-link">Demander un devis</span>
+                </a>
+                <a href="#devis" class="traiteur-card" data-prestation="Plateaux repas">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M3 11h18M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                     <h3>Plateaux repas</h3>
                     <p>Des plateaux soignés et équilibrés, idéals pour vos réunions et déjeuners d'affaires, livrés prêts à savourer.</p>
-                </div>
+                    <span class="traiteur-card-link">Demander un devis</span>
+                </a>
+                <a href="#devis" class="traiteur-card" data-prestation="Privatisation">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M10 21v-6h4v6"/><path d="M12 11h.01"/></svg>
+                    <h3>Privatisation</h3>
+                    <p>Le restaurant rien que pour vous : anniversaire, mariage, séminaire ou soirée d'entreprise, le midi comme le soir.</p>
+                    <span class="traiteur-card-link">Demander un devis</span>
+                </a>
             </div>
-            <div class="traiteur-cta">
-                <a href="#contact" class="btn btn-primary">Nous contacter</a>
+            <div class="devis-wrapper" id="devis">
+                <h3 class="devis-title">Parlez-nous de votre projet</h3>
+                <p class="devis-subtitle">Décrivez-nous votre événement, nous revenons vers vous rapidement avec une proposition sur mesure.</p>
+                <form class="devis-form" id="devisForm">
+                    <input type="text" name="_honey" style="display:none">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="devis-name">Nom</label>
+                            <input type="text" id="devis-name" name="name" required placeholder="Votre nom">
+                        </div>
+                        <div class="form-group">
+                            <label for="devis-email">Email</label>
+                            <input type="email" id="devis-email" name="email" required placeholder="votre@email.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="devis-phone">Téléphone</label>
+                            <input type="tel" id="devis-phone" name="phone" required placeholder="06 12 34 56 78" pattern="^(?:(?:\+33|0033|0)\s*[1-9])(?:[\s.-]*\d{2}){4}$" title="Numéro de téléphone français valide (ex: 06 12 34 56 78)">
+                        </div>
+                        <div class="form-group">
+                            <label for="devis-prestation">Prestation</label>
+                            <select id="devis-prestation" name="prestation" required>
+                                <option value="">Type de prestation</option>
+                                <option value="Menus sur mesure">Menus sur mesure</option>
+                                <option value="Apéritif dînatoire">Apéritif dînatoire</option>
+                                <option value="Plateaux repas">Plateaux repas</option>
+                                <option value="Privatisation">Privatisation</option>
+                                <option value="Autre">Autre demande</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="devis-date">Date souhaitée (optionnel)</label>
+                            <input type="date" id="devis-date" name="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="devis-guests">Nombre de convives (optionnel)</label>
+                            <input type="number" id="devis-guests" name="guests" min="1" max="999" placeholder="Ex : 30">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="devis-message">Votre projet</label>
+                        <textarea id="devis-message" name="message" rows="4" required placeholder="Type d'événement, lieu, envies particulières, budget indicatif…"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Envoyer ma demande</button>
+                </form>
             </div>
         </div>
     </section>
