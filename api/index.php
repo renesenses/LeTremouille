@@ -125,6 +125,13 @@ if ($errors) {
     exit(json_encode(['error' => 'Champs invalides', 'fields' => $errors]));
 }
 
+// --- Soirées complètes (même liste que soireesCompletes dans script.js) ---
+const SOIREES_COMPLETES = ['2026-10-10', '2026-10-16', '2026-10-22', '2026-10-23'];
+if (in_array($date, SOIREES_COMPLETES, true) && $time >= '19:00') {
+    http_response_code(409);
+    exit(json_encode(['error' => 'Soirée complète']));
+}
+
 // --- Format date in French ---
 $dateFormatted = formatDateFr($date);
 
