@@ -126,7 +126,7 @@ if ($errors) {
 }
 
 // --- Soirées complètes (même liste que soireesCompletes dans script.js) ---
-const SOIREES_COMPLETES = ['2026-10-10', '2026-10-16', '2026-10-22', '2026-10-23'];
+const SOIREES_COMPLETES = ['2026-10-10', '2026-10-16', '2026-10-22', '2026-10-23', '2026-11-20'];
 if (in_array($date, SOIREES_COMPLETES, true) && $time >= '19:00') {
     http_response_code(409);
     exit(json_encode(['error' => 'Soirée complète']));
