@@ -91,7 +91,8 @@ function estFerme(dateStr) {
     return fermetures.some(f => dateStr >= f.debut && dateStr <= f.fin);
 }
 
-dateInput.addEventListener('change', () => {
+function majCreneaux() {
+    if (!dateInput.value) return;
     const selected = new Date(dateInput.value + 'T00:00');
     const day = selected.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
 
@@ -133,12 +134,19 @@ dateInput.addEventListener('change', () => {
         dateInfo.classList.add('info-lunch');
     }
 
+    const choix = timeSelect.value;
     timeSelect.innerHTML = '';
     allTimeOptions.forEach(opt => {
         if ((lunchOnly || eveningFull) && opt.value && opt.value >= '19:00') return;
         timeSelect.appendChild(opt.cloneNode(true));
     });
-});
+    if ([...timeSelect.options].some(o => o.value === choix)) timeSelect.value = choix;
+}
+
+// Safari et les mobiles ne déclenchent pas tous « change » sur un champ date :
+// on recalcule les créneaux à chaque occasion, et à l'ouverture de la liste des heures.
+['change', 'input', 'blur'].forEach(ev => dateInput.addEventListener(ev, majCreneaux));
+['focus', 'mousedown', 'touchstart'].forEach(ev => timeSelect.addEventListener(ev, majCreneaux));
 
 // Anti-spam: track submissions
 let lastSubmitTime = 0;
