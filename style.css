@@ -896,6 +896,11 @@ section {
     color: var(--color-text-muted);
 }
 
+.form-success p.form-success-note {
+    margin-top: 16px;
+    font-size: 0.9rem;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .traiteur-grid {

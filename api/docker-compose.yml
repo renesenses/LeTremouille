@@ -2,7 +2,25 @@ services:
   api:
     build: .
     restart: unless-stopped
+    # nginx (conteneur mozaiklabs-nginx-1) joint l'API par la passerelle Docker
+    # 172.18.0.1:3100 (voir deploy/nginx-api-letremouille.conf) : une liaison sur
+    # 127.0.0.1 le couperait. Liaison ciblée à faire sur le VPS, voir la PR.
     ports:
       - "3100:8080"
     env_file:
       - .env
+    user: "82:82"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
