@@ -64,6 +64,27 @@ const observer = new IntersectionObserver((entries) => {
 
 revealElements.forEach(el => observer.observe(el));
 
+// ===== AFFICHAGE SÛR (textContent, jamais innerHTML avec les données saisies) =====
+function el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    Object.entries(attrs).forEach(([k, v]) => {
+        if (k === 'className') node.className = v; else node.setAttribute(k, v);
+    });
+    children.forEach(c => node.append(c));
+    return node;
+}
+
+function showSuccess(formEl, title, ...paragraphs) {
+    formEl.replaceChildren(el('div', { className: 'form-success' }, el('h3', {}, title), ...paragraphs));
+}
+
+function errorBlock(status, contactText, contactLink) {
+    const text = status === 429
+        ? `Trop de demandes ont été envoyées. Veuillez réessayer plus tard ou ${contactText} `
+        : `Une erreur est survenue. Veuillez réessayer ou ${contactText} `;
+    return el('div', { className: 'form-error' }, text, contactLink, '.');
+}
+
 // ===== RESERVATION FORM =====
 const form = document.getElementById('reservationForm');
 const API_URL = 'https://api.letremouille.fr/reservation';
@@ -105,7 +126,7 @@ function majCreneaux() {
         dateInfo.textContent = 'Fermé pour congés à cette date — veuillez choisir un autre jour.';
         dateInfo.classList.add('info-closed');
         dateInput.value = '';
-        timeSelect.innerHTML = '';
+        timeSelect.replaceChildren();
         allTimeOptions.forEach(opt => timeSelect.appendChild(opt.cloneNode(true)));
         return;
     }
@@ -115,7 +136,7 @@ function majCreneaux() {
         dateInfo.textContent = 'Fermé le dimanche — veuillez choisir un autre jour.';
         dateInfo.classList.add('info-closed');
         dateInput.value = '';
-        timeSelect.innerHTML = '';
+        timeSelect.replaceChildren();
         allTimeOptions.forEach(opt => timeSelect.appendChild(opt.cloneNode(true)));
         return;
     }
@@ -135,7 +156,7 @@ function majCreneaux() {
     }
 
     const choix = timeSelect.value;
-    timeSelect.innerHTML = '';
+    timeSelect.replaceChildren();
     allTimeOptions.forEach(opt => {
         if ((lunchOnly || eveningFull) && opt.value && opt.value >= '19:00') return;
         timeSelect.appendChild(opt.cloneNode(true));
@@ -214,26 +235,18 @@ form.addEventListener('submit', (e) => {
         method: 'POST',
         body: formData,
     }).then(response => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) throw response.status;
         return response.json();
     }).then(() => {
         incrementSubmitCount();
-        form.innerHTML = `
-            <div class="form-success">
-                <h3>Merci ${data.name} !</h3>
-                <p>Votre demande de réservation pour ${data.guests} personne(s)<br>
-                le ${new Date(data.date + 'T00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-                à ${data.time} a bien été envoyée.</p>
-                <p style="margin-top: 16px; font-size: 0.9rem;">Sans nouvelle de notre part sous 2h, votre réservation est confirmée.</p>
-            </div>
-        `;
-    }).catch(() => {
+        const jour = new Date(data.date + 'T00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        const p1 = el('p', {}, `Votre demande de réservation pour ${data.guests} personne(s)`, el('br'), `le ${jour} à ${data.time} a bien été envoyée.`);
+        const p2 = el('p', { className: 'form-success-note' }, 'Sans nouvelle de notre part sous 2h, votre réservation est confirmée.');
+        showSuccess(form, `Merci ${data.name} !`, p1, p2);
+    }).catch((status) => {
         submitBtn.textContent = 'Confirmer la réservation';
         submitBtn.disabled = false;
-        const err = document.createElement('div');
-        err.className = 'form-error';
-        err.innerHTML = 'Une erreur est survenue. Veuillez réessayer ou nous appeler au <a href="tel:+33373738465">03 73 73 84 65</a>.';
-        form.insertBefore(err, submitBtn);
+        form.insertBefore(errorBlock(status, 'nous appeler au', el('a', { href: 'tel:+33373738465' }, '03 73 73 84 65')), submitBtn);
     });
 });
 
@@ -279,23 +292,15 @@ devisForm.addEventListener('submit', (e) => {
         method: 'POST',
         body: formData,
     }).then(response => {
-        if (!response.ok) throw new Error(response.status);
+        if (!response.ok) throw response.status;
         return response.json();
     }).then(() => {
-        devisForm.innerHTML = `
-            <div class="form-success">
-                <h3>Merci ${data.name} !</h3>
-                <p>Votre demande « ${data.prestation} » a bien été envoyée.<br>
-                Nous revenons vers vous très rapidement.</p>
-            </div>
-        `;
-    }).catch(() => {
+        const p = el('p', {}, `Votre demande « ${data.prestation} » a bien été envoyée.`, el('br'), 'Nous revenons vers vous très rapidement.');
+        showSuccess(devisForm, `Merci ${data.name} !`, p);
+    }).catch((status) => {
         submitBtn.textContent = 'Envoyer ma demande';
         submitBtn.disabled = false;
-        const err = document.createElement('div');
-        err.className = 'form-error';
-        err.innerHTML = 'Une erreur est survenue. Veuillez réessayer ou nous écrire à <a href="mailto:contact@letremouille.com">contact@letremouille.com</a>.';
-        devisForm.insertBefore(err, submitBtn);
+        devisForm.insertBefore(errorBlock(status, 'nous écrire à', el('a', { href: 'mailto:contact@letremouille.com' }, 'contact@letremouille.com')), submitBtn);
     });
 });
 
