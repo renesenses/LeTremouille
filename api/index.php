@@ -26,10 +26,41 @@ if (!in_array($uri, ['/reservation', '/contact'], true)) {
 }
 
 // --- Parse input (FormData or JSON) ---
+const MAX_BODY_BYTES = 32768;
+
+$declared = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($declared > MAX_BODY_BYTES) {
+    http_response_code(413);
+    exit(json_encode(['error' => 'Requête trop volumineuse']));
+}
+
 $ct = $_SERVER['CONTENT_TYPE'] ?? '';
-$input = str_contains($ct, 'application/json')
-    ? (json_decode(file_get_contents('php://input'), true) ?? [])
-    : $_POST;
+if (str_contains($ct, 'application/json')) {
+    // Lecture bornée avant décodage (couvre aussi un corps sans Content-Length fiable)
+    $raw = (string)file_get_contents('php://input', false, null, 0, MAX_BODY_BYTES + 1);
+    if (strlen($raw) > MAX_BODY_BYTES) {
+        http_response_code(413);
+        exit(json_encode(['error' => 'Requête trop volumineuse']));
+    }
+    $input = json_decode($raw, true);
+    if (!is_array($input)) {
+        http_response_code(400);
+        exit(json_encode(['error' => 'Corps JSON invalide']));
+    }
+} else {
+    $input = $_POST;
+}
+
+// Chaque valeur doit être une chaîne ou un nombre (jamais un tableau / objet / booléen)
+foreach ($input as $k => $v) {
+    if (is_int($v) || is_float($v)) {
+        $input[$k] = (string)$v;
+    } elseif (!is_string($v)) {
+        if ($k === '_honey') { $input[$k] = '1'; continue; }
+        http_response_code(400);
+        exit(json_encode(['error' => 'Champ invalide']));
+    }
+}
 
 // Honeypot
 if (!empty($input['_honey'])) {
@@ -48,12 +79,32 @@ if (!$resendKey) {
     exit(json_encode(['error' => 'Configuration serveur manquante']));
 }
 
+// --- Validation helpers ---
+// Texte court : une ligne, sans caractère de contrôle (empêche l'injection d'en-têtes de courriel)
+$shortOk = fn(string $s, int $min, int $max): bool =>
+    mb_strlen($s) >= $min && mb_strlen($s) <= $max && !preg_match('/[\x00-\x1F\x7F]/', $s);
+// Texte libre : retours à la ligne permis, autres caractères de contrôle refusés
+$longOk = fn(string $s, int $max): bool =>
+    mb_strlen($s) <= $max && !preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $s);
+$phoneOk = fn(string $s): bool => (bool)preg_match('/^\+?[0-9 .()\/-]{6,25}$/', $s);
+// Date AAAA-MM-JJ réelle, comprise entre hier et dans 18 mois
+$dateOk = function (string $s): bool {
+    if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $s, $m) || !checkdate((int)$m[2], (int)$m[3], (int)$m[1])) {
+        return false;
+    }
+    return $s >= date('Y-m-d', strtotime('-1 day')) && $s <= date('Y-m-d', strtotime('+18 months'));
+};
+
 // --- Escape for HTML emails ---
 $h = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
 // =============================================================
 // /contact — demande traiteur / événement / privatisation
 // =============================================================
+const PRESTATIONS = ['Menus sur mesure', 'Apéritif dînatoire', 'Plateaux repas', 'Privatisation', 'Autre'];
+const COUVERTS = ['1', '2', '3', '4', '5', '6', '7+'];
+const CRENEAUX = ['12:00', '12:30', '13:00', '13:30', '14:00', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'];
+
 if ($uri === '/contact') {
     $name       = trim($input['name'] ?? '');
     $email      = trim($input['email'] ?? '');
@@ -64,13 +115,13 @@ if ($uri === '/contact') {
     $message    = trim($input['message'] ?? '');
 
     $errors = [];
-    if ($name === '')  $errors[] = 'name';
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
-    if ($phone === '') $errors[] = 'phone';
-    if ($prestation === '' || mb_strlen($prestation) > 60) $errors[] = 'prestation';
-    if ($date !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $errors[] = 'date';
-    if ($guests !== '' && !preg_match('/^\d{1,3}$/', $guests)) $errors[] = 'guests';
-    if ($message === '' || mb_strlen($message) > 5000) $errors[] = 'message';
+    if (!$shortOk($name, 1, 80)) $errors[] = 'name';
+    if (!$shortOk($email, 3, 254) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
+    if (!$phoneOk($phone)) $errors[] = 'phone';
+    if (!in_array($prestation, PRESTATIONS, true)) $errors[] = 'prestation';
+    if ($date !== '' && !$dateOk($date)) $errors[] = 'date';
+    if ($guests !== '' && !(preg_match('/^\d{1,3}$/', $guests) && (int)$guests >= 1)) $errors[] = 'guests';
+    if ($message === '' || !$longOk($message, 2000)) $errors[] = 'message';
 
     if ($errors) {
         http_response_code(422);
@@ -85,7 +136,8 @@ if ($uri === '/contact') {
         $email
     );
 
-    $ok2 = sendEmail($resendKey, $fromEmail, $fromName, $email,
+    // Confirmation au client seulement si la notification au restaurant est partie
+    $ok2 = $ok1 && sendEmail($resendKey, $fromEmail, $fromName, $email,
         'Votre demande au Trémouille',
         buildContactConfirmationHtml($h, $name, $prestation),
         $toEmail
@@ -113,12 +165,13 @@ $time    = trim($input['time'] ?? '');
 $message = trim($input['message'] ?? '');
 
 $errors = [];
-if ($name === '')  $errors[] = 'name';
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
-if ($phone === '') $errors[] = 'phone';
-if ($guests === '') $errors[] = 'guests';
-if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) $errors[] = 'date';
-if ($time === '')  $errors[] = 'time';
+if (!$shortOk($name, 1, 80)) $errors[] = 'name';
+if (!$shortOk($email, 3, 254) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'email';
+if (!$phoneOk($phone)) $errors[] = 'phone';
+if (!in_array($guests, COUVERTS, true)) $errors[] = 'guests';
+if (!$dateOk($date)) $errors[] = 'date';
+if (!in_array($time, CRENEAUX, true)) $errors[] = 'time';
+if (!$longOk($message, 1000)) $errors[] = 'message';
 
 if ($errors) {
     http_response_code(422);
@@ -143,7 +196,7 @@ $ok1 = sendEmail($resendKey, $fromEmail, $fromName, $toEmail,
 );
 
 // --- Send confirmation to client ---
-$ok2 = sendEmail($resendKey, $fromEmail, $fromName, $email,
+$ok2 = $ok1 && sendEmail($resendKey, $fromEmail, $fromName, $email,
     'Votre réservation au Trémouille',
     buildConfirmationHtml($h, $name, $guests, $dateFormatted, $time),
     $toEmail
@@ -160,6 +213,17 @@ exit(json_encode(['error' => "Erreur d'envoi"]));
 
 function sendEmail(string $apiKey, string $from, string $fromName, string $to, string $subject, string $html, string $replyTo): bool
 {
+    // Défense en profondeur : aucun retour chariot dans ce qui devient un en-tête
+    foreach ([$from, $fromName, $to, $subject, $replyTo] as $v) {
+        if (preg_match('/[\x00-\x1F\x7F]/', $v)) {
+            error_log('Valeur d\'en-tête refusée');
+            return false;
+        }
+    }
+    // Mode essai (tests locaux uniquement) : aucun appel réseau
+    if (getenv('TREMOUILLE_MAIL_DRYRUN') === '1') {
+        return true;
+    }
     $ch = curl_init('https://api.resend.com/emails');
     curl_setopt_array($ch, [
         CURLOPT_POST           => true,
@@ -194,7 +258,7 @@ function formatDateFr(string $date): string
 {
     $days   = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
     $months = ['','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-    $ts     = strtotime($date);
+    $ts     = strtotime($date) ?: 0;
     return $days[(int)date('w', $ts)] . ' ' . (int)date('j', $ts) . ' ' . $months[(int)date('n', $ts)] . ' ' . date('Y', $ts);
 }
 
