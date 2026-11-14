@@ -81,6 +81,22 @@ const allTimeOptions = Array.from(timeSelect.querySelectorAll('option'));
 // Soirées complètes (format YYYY-MM-DD)
 const soireesCompletes = ['2026-03-27', '2026-07-10', '2026-09-18', '2026-09-25', '2026-09-28', '2026-10-01', '2026-10-10', '2026-10-16', '2026-10-22', '2026-10-23', '2026-11-20', '2026-11-27'];
 
+// Soirées privatisées pour un événement avec billetterie : message et lien à la place du créneau du soir
+const soireesEvenement = {
+    '2026-11-27': { nom: 'Soirée Twenty Wine × Le Trémouille', url: 'https://square.link/u/BhcE37su' }
+};
+
+// La section « Événement » et son lien de menu disparaissent d'eux-mêmes le lendemain de la soirée
+(function () {
+    const section = document.getElementById('evenement');
+    if (!section) return;
+    const fin = new Date('2026-11-28T00:00:00');
+    if (new Date() >= fin) {
+        section.remove();
+        document.querySelectorAll('a[href="#evenement"]').forEach(a => a.closest('li') ? a.closest('li').remove() : a.remove());
+    }
+})();
+
 // Ouvertures exceptionnelles en soirée (mar/mer normalement fermés le soir)
 const soireesExceptionnelles = ['2026-03-25'];
 
@@ -128,6 +144,14 @@ function majCreneaux() {
 
     if (lunchOnly) {
         dateInfo.textContent = 'Service midi uniquement le mardi et mercredi (12h–14h).';
+        dateInfo.classList.add('info-lunch');
+    } else if (eveningFull && soireesEvenement[dateInput.value]) {
+        const ev = soireesEvenement[dateInput.value];
+        dateInfo.textContent = '';
+        dateInfo.append('Ce soir-là, le restaurant accueille la ', ev.nom, ' : ');
+        const lien = document.createElement('a');
+        lien.href = ev.url; lien.target = '_blank'; lien.rel = 'noopener'; lien.textContent = 'réservez votre place ici';
+        dateInfo.append(lien, '. Il reste des places le midi.');
         dateInfo.classList.add('info-lunch');
     } else if (eveningFull) {
         dateInfo.textContent = 'Complet en soirée — il reste des places le midi.';
