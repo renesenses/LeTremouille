@@ -97,9 +97,6 @@ const soireesEvenement = {
     }
 })();
 
-// Ouvertures exceptionnelles en soirée (mar/mer normalement fermés le soir)
-const soireesExceptionnelles = ['2026-03-25'];
-
 // Fermetures complètes (congés) : plages de dates [debut, fin] incluses, midi et soir
 const fermetures = [];
 
@@ -136,16 +133,10 @@ function majCreneaux() {
         return;
     }
 
-    // Tuesday (2) / Wednesday (3): lunch only, sauf ouvertures exceptionnelles
-    const lunchOnly = (day === 2 || day === 3) && !soireesExceptionnelles.includes(dateInput.value);
-
     // Evening fully booked on specific dates
     const eveningFull = soireesCompletes.includes(dateInput.value);
 
-    if (lunchOnly) {
-        dateInfo.textContent = 'Service midi uniquement le mardi et mercredi (12h–14h).';
-        dateInfo.classList.add('info-lunch');
-    } else if (eveningFull && soireesEvenement[dateInput.value]) {
+    if (eveningFull && soireesEvenement[dateInput.value]) {
         const ev = soireesEvenement[dateInput.value];
         dateInfo.textContent = '';
         dateInfo.append('Ce soir-là, le restaurant accueille la ', ev.nom, ' : ');
@@ -161,7 +152,7 @@ function majCreneaux() {
     const choix = timeSelect.value;
     timeSelect.innerHTML = '';
     allTimeOptions.forEach(opt => {
-        if ((lunchOnly || eveningFull) && opt.value && opt.value >= '19:00') return;
+        if (eveningFull && opt.value && opt.value >= '19:00') return;
         timeSelect.appendChild(opt.cloneNode(true));
     });
     if ([...timeSelect.options].some(o => o.value === choix)) timeSelect.value = choix;
